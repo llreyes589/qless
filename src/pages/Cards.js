@@ -1,15 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom'
+import { addNewCard } from '../Api';
+import { GlobalContext } from '../context/GlobalState'
 
-const Card = ({ cards, addNewCard }) => {
-    const handleAddNew = () => {
-        // const newCard: QLessCard = {
-        //     id: cards.length + 1,
-        //     discount_number: '123321',
-        //     load: 100,
-        //     expires_at: (new Date()).toDateString()
-        // }
-        // addNewCard(newCard)
+const Card = ({ cards }) => {
+    const { contextAddNewCard } = useContext(GlobalContext)
+    const handleAddNew = async () => {
+        const newCard = await addNewCard()
+        contextAddNewCard(newCard)
     }
     return (
         <>
@@ -45,15 +43,17 @@ const Card = ({ cards, addNewCard }) => {
                         </thead>
                         <tbody>
                             {cards.map((card, index) => (
-                                
+
                                 <tr key={index}>
                                     <td>{card.id}</td>
                                     <td>{card.discount_number ? 'Discounted' : 'Regular'}</td>
                                     <td>{card.load}</td>
                                     <td>{card.expires_at}</td>
                                     <td>
-                                        {!card.discount_number &&
-                                            <Link to={`/cards/${card.id}`} state={{from: 'card'}} className="btn btn-sm btn-success" >Register Discount</Link>
+                                        {!card.discount_number ?
+                                            <Link to={`/cards/${card.id}`} state={{ from: 'card' }} className="btn btn-sm btn-success" >Register Discount</Link>
+                                            :
+                                            <Link to={`/cards/${card.id}`} state={{ from: 'card' }} className="btn btn-sm btn-primary" >View</Link>
                                         }
                                         <button className="btn btn-sm btn-danger">Delete</button>
                                     </td>

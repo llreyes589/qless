@@ -19,11 +19,18 @@ export const GlobalProvider = ({ children }) => {
         dispatch({type: 'UPDATE_CARD', payload:id})
     }
 
+    const contextAddNewCard = (card) => {
+        dispatch({type: 'ADD_CARD', payload:card})
+    }
+    
+
+
     return (
         <GlobalContext.Provider value={{
             cards: state.cards,
             fetchAllCards,
-            contextUpdateCard
+            contextUpdateCard,
+            contextAddNewCard
         }}>
             {children}
         </GlobalContext.Provider>
