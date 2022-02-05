@@ -1,24 +1,52 @@
-import logo from './logo.svg';
+import React, { useState, useEffect, useContext } from 'react';
+import {Routes, Route} from 'react-router-dom'
+import Navbar from './components/Navbar';
+import Cards from './pages/Cards';
+import Card from './pages/Card';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import {fetchCards} from './Api'
+// import {GlobalContext} from './context/GlobalState'
+
 
 function App() {
+  // const {cards} = useContext(GlobalContext)
+  const [loading, setLoading] = useState(true)
+  const [cards, setCards] = useState([])
+  const addNewCard = (card) =>{
+    // setCards([...cards, card])
+  }
+
+  useEffect(() => {
+    init()
+  }, []);
+  
+
+  const init = async() => {
+    const data  =  await fetchCards();
+    setCards([...cards, ...data])
+    
+    setLoading(false)
+  } 
+
+
+  
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar />
+      <div className="container">
+        {loading ? <p>Loading...</p> : 
+          <Routes>
+            {/* <Route path="/" element={<App />} /> */}
+            <Route path="cards" element={<Cards cards={cards} addNewCard={addNewCard}/>} />
+            <Route path="cards/:id" element={<Card  />} />
+          </Routes>
+        }
+
+      </div>
+    </>
   );
 }
 
