@@ -4,7 +4,19 @@ export default (state, action) =>{
             return {
                 ...state, cards: [...state.cards, ...action.payload]
             }
-    
+        case 'UPDATE_CARD':
+            const newCards = state.cards.map(card=>{
+                if(card.id == action.payload.id){
+                    return{
+                        ...card, 
+                        ...action.payload
+                    }
+                }
+                return card
+            })
+            return {
+                ...state, cards: [...newCards]
+            }
         default:
             return state
     }

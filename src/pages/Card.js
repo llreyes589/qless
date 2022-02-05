@@ -1,41 +1,36 @@
-import React, { useEffect ,useState} from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { showCard, updateCard } from '../Api';
-import { useParams, useNavigate  } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
+import { GlobalContext } from '../context/GlobalState';
+
+
 
 const Card = () => {
+    const { cards, contextUpdateCard } = useContext(GlobalContext)
     let navigate = useNavigate();
-    const [card, setCard] = useState([]);
+    const [card, setCard] = useState(null);
     const [discountType, setDiscountType] = useState('sc');
     const [discountNumber, setDiscountNumber] = useState(0);
 
     const params = useParams()
-    const details = async() => {
-        const data = await showCard(Number(params.id))
-        setCard({...card, ...data})
+    const getDetails = () => {
+        setCard(cards.filter(card => card.id === Number(params.id))[0])
     }
     useEffect(() => {
-        details()
+        getDetails()
     }, []);
 
-    // const handleDiscountTypeChange = (e) =>{
-    //     e.preventDefault();
-    //     setDiscountType(e.target.value)
-    // }
-    // const handleDiscountNumberChange = () =>{
-    //     e.preventDefault();
-    //     setDiscountNumber(Number(e.target.value))
-    // }
-
-    const handleRegister = (e) =>{
+    const handleRegister = async(e) => {
         e.preventDefault()
         const inputs = {
             id: Number(params.id),
             discount_number: discountNumber
         }
-        try{
-            
-            updateCard(inputs.id, inputs.discount_number)
-        }catch(error){
+        try {
+
+            const data = await updateCard(inputs.id, inputs.discount_number)
+            contextUpdateCard(data)
+        } catch (error) {
             alert(error)
         }
         navigate('/cards');
@@ -43,7 +38,7 @@ const Card = () => {
 
 
     }
-    
+
     return (
         <div className="row justify-content-center mt-3">
             <div className="col-md-6 col-sm-12">

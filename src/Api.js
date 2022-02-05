@@ -28,6 +28,7 @@ export const updateCard = async (id, discount_number) => {
         let { data } = await axios.put(endpoint, inputs)
         console.log(data)
         return await data
+
     } catch (error) {
         alert(error)
     }

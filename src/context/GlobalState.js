@@ -15,10 +15,15 @@ export const GlobalProvider = ({ children }) => {
         dispatch({ type: 'FETCH_CARDS', payload: cards })
     }
 
+    const contextUpdateCard = (id) => {
+        dispatch({type: 'UPDATE_CARD', payload:id})
+    }
+
     return (
         <GlobalContext.Provider value={{
             cards: state.cards,
-            fetchAllCards
+            fetchAllCards,
+            contextUpdateCard
         }}>
             {children}
         </GlobalContext.Provider>
