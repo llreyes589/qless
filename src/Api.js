@@ -47,7 +47,6 @@ export const saveReloading = async(inputs) => {
     const endpoint = `http://localhost:8000/api/reloadings`
     try {
         let { data } = await axios.put(endpoint, inputs)
-        console.log('data', data)
         return await data
 
 

@@ -1,20 +1,31 @@
 import React, { useContext, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { saveReloading } from '../Api';
-import { Link } from 'react-router-dom'
 import { GlobalContext } from '../context/GlobalState';
 
 const Load = () => {
-    const { cards, contextUpdateCard } = useContext(GlobalContext)
+    const { contextUpdateCard } = useContext(GlobalContext)
     const [cardId, setCardId] = useState(1);
     const [amount, setAmount] = useState(100);
     const [cash, setCash] = useState(100);
+    const [isSuccess, setIsSuccess] = useState(false);
 
-    const handleAddLoad = (e) => {
+    const handleAddLoad = async (e) => {
         e.preventDefault()
         const inputs = {
             cardId, amount, cash
         }
-        saveReloading(inputs)
+        const data = await saveReloading(inputs)
+        contextUpdateCard(data)
+        setIsSuccess(true)
+    }
+    
+    const handleNewLoad = () =>{
+        setIsSuccess(prev => !prev)
+        setCardId(1)
+        setAmount(100)
+        setCash(100)
+
     }
 
     return (
@@ -27,6 +38,11 @@ const Load = () => {
             <hr />
             <div className="row justify-content-center mt-3">
                 <div className="col-md-6 col-sm-12">
+                {isSuccess &&
+                    <div className="alert alert-success">
+                        <p className="lead">Success! Load added. <button className='btn btn-sm btn-primary' onClick={e => handleNewLoad()}>New Load</button></p>
+                    </div>
+                }
                     <div className='card shadow'>
                         <div className="card-body">
                             <form onSubmit={e => handleAddLoad(e)}>
