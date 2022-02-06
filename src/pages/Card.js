@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { showCard, updateCard } from '../Api';
+import { updateCard } from '../Api';
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { GlobalContext } from '../context/GlobalState';
 
@@ -18,7 +18,9 @@ const Card = () => {
     }
     useEffect(() => {
         getDetails()
+        
     }, []);
+
 
     const handleRegister = async (e) => {
         e.preventDefault()
@@ -41,7 +43,7 @@ const Card = () => {
             <nav aria-label="breadcrumb" className='mt-2'>
                 <ol className="breadcrumb">
                     <li className="breadcrumb-item" aria-current="page"><Link to={'/cards'}>Cards</Link></li>
-                    <li className="breadcrumb-item active" aria-current="page">Register Discount</li>
+                    <li className="breadcrumb-item active" aria-current="page">{!card?.discount_number ? "Register discount" : 'View details'}</li>
                 </ol>
             </nav>
             <hr />
@@ -68,7 +70,7 @@ const Card = () => {
                                 <div className="col-md col-sm-12">{card?.created_at}</div>
                             </div>
                             <div className="row">
-                                <div className="col-md-4 col-sm-12">EXPIRATION DATE:</div>
+                                <div className="col-md-4 col-sm-12">EXPIRATION DATE: </div>
                                 <div className="col-md col-sm-12">{card?.expires_at}</div>
                             </div>
                             {card?.discount_number ?

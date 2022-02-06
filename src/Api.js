@@ -42,3 +42,16 @@ export const updateCard = async (id, discount_number) => {
         alert(error)
     }
 }
+
+export const saveReloading = async(inputs) => {
+    const endpoint = `http://localhost:8000/api/reloadings`
+    try {
+        let { data } = await axios.put(endpoint, inputs)
+        console.log('data', data)
+        return await data
+
+
+    } catch (error) {
+        alert(error)
+    } 
+}

@@ -51,10 +51,11 @@ const Card = ({ cards }) => {
                                     <td>{card.expires_at}</td>
                                     <td>
                                         {!card.discount_number ?
-                                            <Link to={`/cards/${card.id}`} state={{ from: 'card' }} className="btn btn-sm btn-success" >Register Discount</Link>
+                                            <Link to={`/cards/${card.id}`} className="btn btn-sm btn-success" >Register Discount</Link>
                                             :
-                                            <Link to={`/cards/${card.id}`} state={{ from: 'card' }} className="btn btn-sm btn-primary" >View</Link>
+                                            <Link to={`/cards/${card.id}`} className="btn btn-sm btn-primary" >View</Link>
                                         }
+
                                         <button className="btn btn-sm btn-danger">Delete</button>
                                     </td>
                                 </tr>
