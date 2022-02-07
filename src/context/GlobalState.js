@@ -3,7 +3,7 @@ import AppReducer from './AppReducer'
 
 const initialState = {
     cards: [],
-    fare_matrix: [
+    lineStations: [
         {
             line: 1, stations: [
                 'BACLARAN',
@@ -384,7 +384,7 @@ export const GlobalProvider = ({ children }) => {
         <GlobalContext.Provider value={{
             cards: state.cards,
             fares: state.fares,
-            fare_matrix: state.fare_matrix,
+            lineStations: state.lineStations,
             fetchAllCards,
             contextUpdateCard,
             contextAddNewCard,

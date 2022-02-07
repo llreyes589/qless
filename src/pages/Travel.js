@@ -9,7 +9,7 @@ const Travel = () => {
     const [exit, setExit] = useState(1);
     const [fare, setFare] = useState('')
     const [stations, setStations] = useState([]);
-    const { fare_matrix, fares, contextAddCardTransaction } = useContext(GlobalContext)
+    const { lineStations, fares, contextAddCardTransaction } = useContext(GlobalContext)
     const [card, setCard] = useState([]);
     const [discount, setDiscount] = useState(0);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -29,37 +29,35 @@ const Travel = () => {
     }
 
     const selectLineNo = (number) => {
-        fare_matrix.map(matrix => {
-            if (number === matrix.line) {
-                setStations(matrix.stations)
+        lineStations.map(line => {
+            if (Number(number) === line.line) {
+                setStations(line.stations)
             }
-            return matrix
         })
     }
 
-    const handleSetEntry = (e) =>{
+    const handleSetEntry = (e) => {
         setEntry(e)
         setExit('')
     }
 
-    const handleSetExit = (e) =>{
+    const handleSetExit = (e) => {
         setExit(e)
         const selectedFare = fares.filter(fare => {
-            if((fare.entry === entry && fare.exit === e) ||( fare.entry === e && fare.exit === entry)){
+            if ((fare.entry === entry && fare.exit === e) || (fare.entry === e && fare.exit === entry)) {
                 return fare
             }
-            return fare
 
         })
         setFare(selectedFare[0].fare)
-        if(card.discount_number != null){
+        if (card.discount_number != null) {
             setDiscount(selectedFare[0].fare * .2)
             const discount = selectedFare[0].fare * .2
             setFare(prev => prev - discount)
         }
     }
 
-    const handleSubmitTrasaction = async(e) => {
+    const handleSubmitTrasaction = async (e) => {
         e.preventDefault();
         const inputs = {
             card_id: cardId,
@@ -71,12 +69,13 @@ const Travel = () => {
         }
 
         const data = await addNewTransaction(inputs)
+        console.log('data', data)
         contextAddCardTransaction(data)
         setIsSuccess(true)
 
     }
 
-    const handleSetCardId = async (id) =>{
+    const handleSetCardId = async (id) => {
         setCardId(id)
         setEntry(1)
         setExit(1)
@@ -84,14 +83,14 @@ const Travel = () => {
         setDiscount(0)
         const data = await showCard(id)
         setCard(data)
-        if(data.discount_number != null){
+        if (data.discount_number != null) {
             setDiscount(fare * .2)
             const discount = fare * .2
             setFare(prev => prev - discount)
         }
     }
 
-    const handleNewTransaction = () =>{
+    const handleNewTransaction = () => {
         setIsSuccess(prev => !prev)
         setCardId('')
         setEntry(1)
@@ -124,7 +123,7 @@ const Travel = () => {
                                 }
                                 <div className="form-group">
                                     <label htmlFor="card_id">Card ID</label>
-                                    <input type="number" value={cardId} onChange={e => handleSetCardId(e.target.value)} min="1" className='form-control' />
+                                    <input type="number" value={cardId} onChange={e => handleSetCardId(e.target.value)} min="1" className='form-control' required />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="line_no">Line Number</label>
@@ -158,7 +157,7 @@ const Travel = () => {
                                 }
                                 <div className="form-group">
                                     <label htmlFor="exit">Fare</label>
-                                    <div className="form-control">{fare  && fare.toFixed(2)}</div>
+                                    <div className="form-control">{fare && fare.toFixed(2)}</div>
                                 </div>
                                 {card && card.discount_number != null &&
                                     <div className="form-group">
