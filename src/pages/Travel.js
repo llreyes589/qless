@@ -69,7 +69,6 @@ const Travel = () => {
         }
 
         const data = await addNewTransaction(inputs)
-        console.log('data', data)
         contextAddCardTransaction(data)
         setIsSuccess(true)
 
