@@ -1,15 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { GlobalContext, } from '../context/GlobalState';
-import { addNewTransaction } from '../Api';
+import { addNewTransaction, showCard } from '../Api';
 
 const Travel = () => {
     const [lineNo, setLineNo] = useState(1);
-    const [cardId, setCardId] = useState(1);
+    const [cardId, setCardId] = useState('');
     const [entry, setEntry] = useState(1);
     const [exit, setExit] = useState(1);
     const [fare, setFare] = useState('')
     const [stations, setStations] = useState([]);
     const { fare_matrix, fares, contextAddCardTransaction } = useContext(GlobalContext)
+    const [card, setCard] = useState([]);
+    const [discount, setDiscount] = useState(0);
+    const [isSuccess, setIsSuccess] = useState(false);
     useEffect(() => {
         selectLineNo(lineNo)
         return () => {
@@ -20,6 +23,9 @@ const Travel = () => {
     const handleLineNumberChange = (e) => {
         setLineNo(e.target.value)
         selectLineNo(e.target.value)
+        setEntry(1)
+        setExit(1)
+        setFare(0)
     }
 
     const selectLineNo = (number) => {
@@ -45,6 +51,11 @@ const Travel = () => {
 
         })
         setFare(selectedFare[0].fare)
+        if(card.discount_number != null){
+            setDiscount(selectedFare[0].fare * .2)
+            const discount = selectedFare[0].fare * .2
+            setFare(prev => prev - discount)
+        }
     }
 
     const handleSubmitTrasaction = async(e) => {
@@ -55,12 +66,38 @@ const Travel = () => {
             entry,
             exit,
             fare,
-            // discount
+            discount: 20
         }
 
         const data = await addNewTransaction(inputs)
         contextAddCardTransaction(data)
+        setIsSuccess(true)
 
+    }
+
+    const handleSetCardId = async (id) =>{
+        setCardId(id)
+        setEntry(1)
+        setExit(1)
+        setFare(0)
+        setDiscount(0)
+        const data = await showCard(id)
+        setCard(data)
+        if(data.discount_number != null){
+            setDiscount(fare * .2)
+            const discount = fare * .2
+            setFare(prev => prev - discount)
+        }
+    }
+
+    const handleNewTransaction = () =>{
+        setIsSuccess(prev => !prev)
+        setCardId('')
+        setEntry(1)
+        setExit(1)
+        setFare(0)
+        setDiscount(0)
+        card.discount_number = null
     }
 
     return (
@@ -73,12 +110,20 @@ const Travel = () => {
             <hr />
             <div className='row justify-content-center'>
                 <div className="col-md-5">
+                    {isSuccess &&
+                        <div className="alert alert-success">
+                            <p className="lead">Success! Travel transaction saved. <button className='btn btn-sm btn-primary' onClick={e => handleNewTransaction()}>New Transaction</button></p>
+                        </div>
+                    }
                     <div className="card shadow">
                         <div className="card-body">
                             <form onSubmit={e => handleSubmitTrasaction(e)}>
+                                {card.discount_number != null &&
+                                    <span className="badge rounded-pill bg-primary">*Discounted</span>
+                                }
                                 <div className="form-group">
                                     <label htmlFor="card_id">Card ID</label>
-                                    <input type="number" value={cardId} onChange={e => setCardId(e.target.value)} min="0" className='form-control' />
+                                    <input type="number" value={cardId} onChange={e => handleSetCardId(e.target.value)} min="1" className='form-control' />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="line_no">Line Number</label>
@@ -112,8 +157,14 @@ const Travel = () => {
                                 }
                                 <div className="form-group">
                                     <label htmlFor="exit">Fare</label>
-                                    <div className="form-control">{fare}</div>
+                                    <div className="form-control">{fare  && fare.toFixed(2)}</div>
                                 </div>
+                                {card && card.discount_number != null &&
+                                    <div className="form-group">
+                                        <label htmlFor="exit">Discount:</label>
+                                        <div className="form-control">{discount.toFixed(2)}</div>
+                                    </div>
+                                }
                                 <br />
                                 <button className="btn btn-success col-md-12">Submit</button>
                             </form>

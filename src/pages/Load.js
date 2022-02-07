@@ -53,11 +53,11 @@ const Load = () => {
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="amount">Desired Amount:</label>
-                                        <input type='number' id='amount' value={amount} min='100' max="10000" onChange={e => setAmount(e.target.value)} className='form-control' />
+                                        <input type='number' id='amount' value={amount} min='100' max="10000" onChange={e => setAmount(e.target.value)} className='form-control' required />
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="cash">Cash/Bill:</label>
-                                        <input type='number' id="cash" value={cash} min={amount} onChange={e => setCash(e.target.value)} className='form-control' />
+                                        <input type='number' id="cash" value={cash} min={amount} onChange={e => setCash(e.target.value)} className='form-control' required />
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="change">Change:</label>
