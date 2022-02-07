@@ -45,7 +45,8 @@ const Travel = () => {
     const handleSetExit = (e) =>{
         setExit(e)
         const selectedFare = fares.filter(fare => {
-            if(fare.entry === entry && fare.exit === e){
+            if(fare.entry === entry && fare.exit === e || fare.entry === e && fare.exit === entry){
+                console.log(fare)
                 return fare
             }
 
