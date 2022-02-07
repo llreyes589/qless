@@ -54,3 +54,13 @@ export const saveReloading = async(inputs) => {
         alert(error)
     } 
 }
+
+export const addNewTransaction = async (inputs) =>{
+    const endpoint = 'http://localhost:8000/api/transactions'
+    try {
+        let { data } = await axios.post(endpoint, inputs)
+        return await data
+    } catch (error) {
+        alert(error)
+    }
+}

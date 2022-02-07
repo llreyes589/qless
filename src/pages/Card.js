@@ -18,9 +18,7 @@ const Card = () => {
     }
     useEffect(() => {
         getDetails()
-        
     }, []);
-
 
     const handleRegister = async (e) => {
         e.preventDefault()
@@ -127,12 +125,14 @@ const Card = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>GIL PUYAT</td>
-                                        <td>LIBERTAD</td>
-                                        <td>12</td>
-                                        <td>{new Date().toLocaleDateString()}</td>
-                                    </tr>
+                                    {card && card.transactions.map(transaction => (
+                                        <tr key={transaction.id}>
+                                            <td>{transaction.entry}</td>
+                                            <td>{transaction.exit}</td>
+                                            <td>{transaction.fare}</td>
+                                            <td>{transaction.created_at}</td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>

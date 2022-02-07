@@ -21,6 +21,21 @@ export default (state, action) => {
             return {
                 ...state, cards: [...newCards]
             }
+        case 'UPDATE_CARD_TRANSACTIONS':
+            const newCardss = state.cards.map(card => {
+                if (card.id == action.payload.id) {
+                    return {
+                        ...card,
+                        ...action.payload
+                    }
+                }
+                return card
+            })
+            return {
+                ...state, cards: [...newCardss]
+            }
+
+            
         default:
             return state
     }

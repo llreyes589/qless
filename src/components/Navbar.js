@@ -23,6 +23,9 @@ const Navbar = () => {
                         <li className="nav-item">
                             <Link className="nav-link" to="/card-reloading">Card Reloading</Link>
                         </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/travel-sim">Travel</Link>
+                        </li>
                     </ul>
                     <form className="d-flex">
                         <input className="form-control me-sm-2" type="text" placeholder="Search" />
