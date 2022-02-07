@@ -29,11 +29,11 @@ const Travel = () => {
     }
 
     const selectLineNo = (number) => {
-        // setStations([...stations])
-        const line = fare_matrix.map(matrix => {
-            if (number == matrix.line) {
+        fare_matrix.map(matrix => {
+            if (number === matrix.line) {
                 setStations(matrix.stations)
             }
+            return matrix
         })
     }
 
@@ -45,10 +45,10 @@ const Travel = () => {
     const handleSetExit = (e) =>{
         setExit(e)
         const selectedFare = fares.filter(fare => {
-            if(fare.entry === entry && fare.exit === e || fare.entry === e && fare.exit === entry){
-                console.log(fare)
+            if((fare.entry === entry && fare.exit === e) ||( fare.entry === e && fare.exit === entry)){
                 return fare
             }
+            return fare
 
         })
         setFare(selectedFare[0].fare)

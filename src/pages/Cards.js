@@ -1,12 +1,13 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom'
 import { addNewCard } from '../Api';
+import CardListItem from '../components/CardListItem';
 import { GlobalContext } from '../context/GlobalState'
 
 const Card = ({ cards }) => {
     const { contextAddNewCard } = useContext(GlobalContext)
     const handleAddNew = async () => {
         const newCard = await addNewCard()
+        newCard.transactions = []
         contextAddNewCard(newCard)
     }
     return (
@@ -42,23 +43,8 @@ const Card = ({ cards }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {cards.map((card, index) => (
-
-                                <tr key={index}>
-                                    <td>{card.id}</td>
-                                    <td>{card.discount_number ? 'Discounted' : 'Regular'}</td>
-                                    <td>{card.load}</td>
-                                    <td>{card.expires_at}</td>
-                                    <td>
-                                        {!card.discount_number ?
-                                            <Link to={`/cards/${card.id}`} className="btn btn-sm btn-success" >Register Discount</Link>
-                                            :
-                                            <Link to={`/cards/${card.id}`} className="btn btn-sm btn-primary" >View</Link>
-                                        }
-
-                                        <button className="btn btn-sm btn-danger">Delete</button>
-                                    </td>
-                                </tr>
+                            {cards.map(card => (
+                                <CardListItem card={card} key={card.id} />
                             ))}
                         </tbody>
                     </table>

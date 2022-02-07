@@ -10,7 +10,7 @@ export default (state, action) => {
             }
         case 'UPDATE_CARD':
             const newCards = state.cards.map(card => {
-                if (card.id == action.payload.id) {
+                if (card.id === action.payload.id) {
                     return {
                         ...card,
                         ...action.payload
@@ -23,7 +23,7 @@ export default (state, action) => {
             }
         case 'UPDATE_CARD_TRANSACTIONS':
             const newCardss = state.cards.map(card => {
-                if (card.id == action.payload.id) {
+                if (card.id === action.payload.id) {
                     return {
                         ...card,
                         ...action.payload

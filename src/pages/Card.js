@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { updateCard } from '../Api';
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { GlobalContext } from '../context/GlobalState';
+import TransactionListItem from '../components/TransactionListItem';
 
 
 
@@ -11,6 +12,24 @@ const Card = () => {
     const [card, setCard] = useState(null);
     const [discountType, setDiscountType] = useState('sc');
     const [discountNumber, setDiscountNumber] = useState(1);
+    const [input, setInput] = useState();
+    const inputCard = useRef();
+
+    const handleChange = () => {
+
+        const scRegex = /(\d{0,2})(\d{0,4})(\d{0,4})/
+        const pwdRegex = /(\d{0,4})(\d{0,4})(\d{0,4})/
+        const cardValue = inputCard.current.value
+          .replace(/\D/g, '')
+          .match(discountType === 'sc' ? scRegex : pwdRegex);
+          inputCard.current.value = !cardValue[2]
+          ? cardValue[1]
+          : `${cardValue[1]}-${cardValue[2]}${`${
+              cardValue[3] ? `-${cardValue[3]}` : ''
+            }`}${`${cardValue[4] ? `-${cardValue[4]}` : ''}`}`;
+        const numbers = inputCard.current.value;
+        setDiscountNumber(numbers);
+      };
 
     const params = useParams()
     const getDetails = () => {
@@ -18,7 +37,8 @@ const Card = () => {
     }
     useEffect(() => {
         getDetails()
-    }, []);
+        handleChange();
+    }, [input]);
 
     const handleRegister = async (e) => {
         e.preventDefault()
@@ -98,7 +118,7 @@ const Card = () => {
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="discount_number">{discountType === 'sc' ? 'Control Number:' : 'ID Number:'}</label>
-                                                <input type="number" value={discountNumber} onChange={e => setDiscountNumber(e.target.value)} className='form-control' />
+                                                <input ref={inputCard} onChange={handleChange} min={discountType === 'sc' ? 10 : 12} max={discountType === 'sc' ? 10 : 12} type="text" className='form-control' placeholder={discountType === 'sc' ? '__-____-____' : '____-____-____'} required />
                                             </div>
                                             <br />
                                             <button className="btn btn-sm btn-success">Register</button>
@@ -126,12 +146,7 @@ const Card = () => {
                                 </thead>
                                 <tbody>
                                     {card && card.transactions.map(transaction => (
-                                        <tr key={transaction.id}>
-                                            <td>{transaction.entry}</td>
-                                            <td>{transaction.exit}</td>
-                                            <td>{transaction.fare}</td>
-                                            <td>{transaction.created_at}</td>
-                                        </tr>
+                                        <TransactionListItem transaction={transaction} key={transaction.id} />
                                     ))}
                                 </tbody>
                             </table>

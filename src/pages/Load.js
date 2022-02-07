@@ -1,11 +1,10 @@
 import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { saveReloading } from '../Api';
 import { GlobalContext } from '../context/GlobalState';
 
 const Load = () => {
     const { contextUpdateCard } = useContext(GlobalContext)
-    const [cardId, setCardId] = useState(1);
+    const [cardId, setCardId] = useState('');
     const [amount, setAmount] = useState(100);
     const [cash, setCash] = useState(100);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -49,7 +48,7 @@ const Load = () => {
                                 <fieldset>
                                     <div className="form-group">
                                         <label htmlFor="card_id">Card ID:</label>
-                                        <input type='number' id='card_id' value={cardId} onChange={e => setCardId(e.target.value)} className='form-control' required />
+                                        <input type='number' id='card_id' value={cardId} onChange={e => setCardId(e.target.value)} className='form-control' required min={1} />
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="amount">Desired Amount:</label>
