@@ -31,7 +31,6 @@ export default (state, action) => {
                 }
                 return card
             })
-            console.log('newCardss', newCardss)
             return {
                 ...state, cards: [...newCardss]
             }
