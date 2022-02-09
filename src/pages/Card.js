@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { GlobalContext } from '../context/GlobalState';
 import TransactionListItem from '../components/TransactionListItem';
+import { addMonth } from '../utils';
 
 
 
@@ -12,6 +13,7 @@ const Card = () => {
     const [discountType, setDiscountType] = useState('sc');
     const [discountNumber, setDiscountNumber] = useState(1);
     const [input, setInput] = useState();
+    const [cancelReg, setCancelReg] = useState(false);
     const inputCard = useRef();
 
     const handleChange = () => {
@@ -33,7 +35,17 @@ const Card = () => {
     const params = useParams()
 
     useEffect(() => {
+        const details = getCardDetails(params.id)
         setCard(getCardDetails(params.id))
+        console.log('plus 6 months',addMonth(details.purchased_at, 6).getTime())
+        console.log('date now',new Date().getTime())
+        if(addMonth(details.purchased_at, 6).getTime() < new Date().getTime()){
+            setCancelReg(prev => !prev)
+            console.log('true')
+        }
+
+        console.log(details)
+
         handleChange();
     }, [input]);
 
@@ -76,10 +88,11 @@ const Card = () => {
                                 <div className="col-md col-sm-12">{card?.purchased_at}</div>
                             </div>
                             <div className="row">
-                                <div className="col-md-4 col-sm-12">EXPIRATION DATE: </div>
+                                <div className="col-md-4 col-sm-12">EXPIRATION DATE: {cancelReg}</div>
                                 <div className="col-md col-sm-12">{card?.expires_at}</div>
                             </div>
-                            {card?.discount_number ?
+                            {cancelReg ?
+                                card?.discount_number ? 
                                 (<>
                                     <div className="row">
                                         <div className="col-md-4 col-sm-12">DISCOUNT TYPE:</div>
@@ -89,7 +102,10 @@ const Card = () => {
                                         <div className="col-md-4 col-sm-12">{card?.discount_number.length > 12 ? 'ID NUMBER' : 'CONTROL NUMBER'}</div>
                                         <div className="col-md col-sm-12">{card?.discount_number}</div>
                                     </div>
-                                </>)
+                                </>) : (<>
+                                            <hr />
+                                            <div className="alert alert-danger">Registation not available.</div>
+                                        </>)
                                 :
                                 <>
 

@@ -15,6 +15,7 @@ const Travel = () => {
     const [isSuccess, setIsSuccess] = useState(false);
     const [additionalDiscount, setadditionalDiscount] = useState(0);
     const [hasAdditionalDiscount, setHasAdditionalDiscount] = useState(true);
+    const [errors, setErrors] = useState([]);
 
     useEffect(() => {
         selectLineNo(lineNo)
@@ -22,6 +23,29 @@ const Travel = () => {
             console.log('unmount');
         };
     }, []);
+
+    const handleSetCardId = async (id) => {
+        setErrors([])
+        setCard([])
+        setCardId(id)
+        setEntry(1)
+        setExit(1)
+        setFare(0)
+        setDiscount(0)
+        const details = getCardDetails(id)
+        setCard(details)
+
+        if (new Date(details.expires_at).getTime() < new Date().getTime()) {
+            setErrors([...errors, 'Card is expired.'])
+        }
+        if (card.discount_number != null) {
+            setDiscount(fare * .2)
+            const discount = fare * .2
+            setFare(prev => prev - discount)
+        }
+
+    }
+
 
     const handleLineNumberChange = (e) => {
         setLineNo(e.target.value)
@@ -54,17 +78,16 @@ const Travel = () => {
         })
         setFare(selectedFare[0].fare)
         const details = getCardDetails(cardId)
-        // setCard(getCardDetails(cardId))
-        
+
         let dailyCount = 0
-        details.transactions.map(transaction =>{
-            if(new Date(transaction.created_at).toLocaleDateString() === new Date().toLocaleDateString()){
+        details.transactions.map(transaction => {
+            if (new Date(transaction.created_at).toLocaleDateString() === new Date().toLocaleDateString()) {
                 return dailyCount++
             }
         })
-        if(dailyCount > 3){
+        if (dailyCount > 3) {
             setHasAdditionalDiscount(false)
-        }else{
+        } else {
             setadditionalDiscount(selectedFare[0].fare * .03)
             const additionalAdiscount = selectedFare[0].fare * .03
             setFare(prev => prev - additionalAdiscount)
@@ -75,6 +98,11 @@ const Travel = () => {
             const discount = selectedFare[0].fare * .2
             setFare(prev => prev - discount)
         }
+
+        if (card.load < selectedFare[0].fare) {
+            setErrors([...errors, 'Insuficient balance.'])
+        }
+
 
 
     }
@@ -95,29 +123,10 @@ const Travel = () => {
         card.transactions = [...card.transactions, newTransaction]
         setIsSuccess(true)
         handleNewTransaction()
+        console.log(errors)
 
     }
 
-    const handleSetCardId = async (id) => {
-        setCardId(id)
-        setEntry(1)
-        setExit(1)
-        setFare(0)
-        setDiscount(0)
-        // const data = await showCard(id)
-        const details = getCardDetails(id)
-        setCard(getCardDetails(id))
-
-
-
-        if (card.discount_number != null) {
-            setDiscount(fare * .2)
-            const discount = fare * .2
-            setFare(prev => prev - discount)
-        }
-
-        // console.log(fare)
-    }
 
     const handleNewTransaction = () => {
         setIsSuccess(prev => !prev)
@@ -191,19 +200,21 @@ const Travel = () => {
                                         <div className="form-control">{(additionalDiscount.toFixed(2))}</div>
                                     </div>
                                 }
-                                <div className="form-group">
-                                    <label htmlFor="exit">Fare</label>
-                                    <div className="form-control">{fare && fare.toFixed(2)}</div>
-                                </div>
-
                                 {card && card.discount_number != null &&
                                     <div className="form-group">
-                                        <label htmlFor="exit">Discount:</label>
+                                        <label htmlFor="exit">Discount</label>
                                         <div className="form-control">{discount.toFixed(2)}</div>
                                     </div>
                                 }
+                                <div className="form-group">
+                                    <label htmlFor="exit">Total Fare</label>
+                                    <div className="form-control">{fare && fare.toFixed(2)}</div>
+                                </div>
+                                <ul>
+                                    {errors.map((error, index) => <li className='text-danger' key={index}>{error}</li>)}
+                                </ul>
                                 <br />
-                                <button className="btn btn-success col-md-12">Submit</button>
+                                <button className="btn btn-success col-md-12" disabled={errors.length > 0 }>Submit</button>
                             </form>
                         </div>
                     </div>

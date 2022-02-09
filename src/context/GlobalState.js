@@ -3,9 +3,10 @@ import AppReducer from './AppReducer'
 
 const initialState = {
     cards: [
+        { id: 4, discount_number: null, load: 420, expires_at: new Date('2026-02-08').toDateString(), purchased_at: new Date('2021-02-08').toDateString(), transactions: [] },
         { id: 3, discount_number: '2345-1234-5678', load: 600, expires_at: new Date('2026-02-08').toDateString(), purchased_at: new Date('2021-02-08').toDateString(), transactions: [] },
-        { id: 2, discount_number: null, load: 350, expires_at: new Date('2027-02-08').toDateString(), purchased_at: new Date('2022-02-08').toDateString(), transactions: [] },
-        { id: 1, discount_number: '12-3456-7890', load: 200, expires_at: new Date('2026-02-08').toDateString(), purchased_at: new Date('2021-02-08').toDateString(), transactions: [] },
+        { id: 2, discount_number: null, load: 350, expires_at: new Date('2020-02-08').toDateString(), purchased_at: new Date('2022-02-08').toDateString(), transactions: [] },
+        { id: 1, discount_number: '12-3456-7890', load: 1, expires_at: new Date('2020-02-08').toDateString(), purchased_at: new Date('2021-02-08').toDateString(), transactions: [] },
     ],
     lineStations: [
         {
