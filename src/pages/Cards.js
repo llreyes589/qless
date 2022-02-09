@@ -1,12 +1,21 @@
 import React, { useContext } from 'react';
-import { addNewCard } from '../Api';
 import CardListItem from '../components/CardListItem';
 import { GlobalContext } from '../context/GlobalState'
+import { addYear } from '../utils';
 
 const Card = ({ cards }) => {
     const { contextAddNewCard } = useContext(GlobalContext)
     const handleAddNew = async () => {
-        const newCard = await addNewCard()
+        const d = new Date();
+        const expiration_dt = addYear(d, 5)
+        const newCard = {
+            id: cards.length+1,
+            discount_number: null,
+            load: 100,
+            expires_at: expiration_dt,
+            purchased_at: new Date().toDateString(),
+
+        }
         newCard.transactions = []
         contextAddNewCard(newCard)
     }

@@ -1,8 +1,12 @@
-import { createContext, useReducer } from 'react'
+import { createContext, useReducer, useState } from 'react'
 import AppReducer from './AppReducer'
 
 const initialState = {
-    cards: [],
+    cards: [
+        { id: 3, discount_number: '2345-1234-5678', load: 600, expires_at: new Date('2026-02-08').toDateString(), purchased_at: new Date('2021-02-08').toDateString(), transactions: [] },
+        { id: 2, discount_number: null, load: 350, expires_at: new Date('2027-02-08').toDateString(), purchased_at: new Date('2022-02-08').toDateString(), transactions: [] },
+        { id: 1, discount_number: '12-3456-7890', load: 200, expires_at: new Date('2026-02-08').toDateString(), purchased_at: new Date('2021-02-08').toDateString(), transactions: [] },
+    ],
     lineStations: [
         {
             line: 1, stations: [
@@ -150,7 +154,7 @@ const initialState = {
         { entry: 'TAYUMAN', exit: 'BAMBANG', fare: 12 },
         { entry: 'TAYUMAN', exit: 'TAYUMAN', fare: 11 },
 
-        
+
         { entry: 'BLUMENTRITT', exit: 'BACLARAN', fare: 21 },
         { entry: 'BLUMENTRITT', exit: 'EDSA', fare: 21 },
         { entry: 'BLUMENTRITT', exit: 'LIBERTAD', fare: 20 },
@@ -281,7 +285,7 @@ const initialState = {
 
         { entry: 'LEGARDA', exit: 'RECTO', fare: 12 },
         { entry: 'LEGARDA', exit: 'LEGARDA', fare: 11 },
-        
+
         { entry: 'PUREZA', exit: 'RECTO', fare: 14 },
         { entry: 'PUREZA', exit: 'LEGARDA', fare: 13 },
         { entry: 'PUREZA', exit: 'PUREZA', fare: 11 },
@@ -366,8 +370,8 @@ export const GlobalProvider = ({ children }) => {
         dispatch({ type: 'FETCH_CARDS', payload: cards })
     }
 
-    const contextUpdateCard = (id) => {
-        dispatch({ type: 'UPDATE_CARD', payload: id })
+    const contextUpdateCard = (card) => {
+        dispatch({ type: 'UPDATE_CARD', payload: card })
     }
 
     const contextAddNewCard = (card) => {
@@ -379,16 +383,22 @@ export const GlobalProvider = ({ children }) => {
         dispatch({ type: 'UPDATE_CARD_TRANSACTIONS', payload: transaction })
     }
 
+    const getCardDetails = (id) => {
+        return state.cards.filter(card => card.id === Number(id))[0]
+    }
+
 
     return (
         <GlobalContext.Provider value={{
+            card: state.card,
             cards: state.cards,
             fares: state.fares,
             lineStations: state.lineStations,
             fetchAllCards,
             contextUpdateCard,
             contextAddNewCard,
-            contextAddCardTransaction
+            contextAddCardTransaction,
+            getCardDetails
 
         }}>
             {children}

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { GlobalContext, } from '../context/GlobalState';
-import { addNewTransaction, showCard } from '../Api';
+import { addYear } from '../utils';
 
 const Travel = () => {
     const [lineNo, setLineNo] = useState(1);
@@ -9,7 +9,7 @@ const Travel = () => {
     const [exit, setExit] = useState(1);
     const [fare, setFare] = useState('')
     const [stations, setStations] = useState([]);
-    const { lineStations, fares, contextAddCardTransaction } = useContext(GlobalContext)
+    const { lineStations, fares, contextAddCardTransaction, getCardDetails } = useContext(GlobalContext)
     const [card, setCard] = useState([]);
     const [discount, setDiscount] = useState(0);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -59,17 +59,18 @@ const Travel = () => {
 
     const handleSubmitTrasaction = async (e) => {
         e.preventDefault();
-        const inputs = {
+        const newTransaction = {
             card_id: cardId,
             line_no: lineNo,
             entry,
             exit,
             fare,
-            discount: 20
+            discount: 20,
+            created_at: new Date().toDateString()
         }
-
-        const data = await addNewTransaction(inputs)
-        contextAddCardTransaction(data)
+        card.load = card.load - fare
+        card.expires_at = addYear(new Date(newTransaction.created_at), 5)
+        card.transactions = [...card.transactions, newTransaction]
         setIsSuccess(true)
 
     }
@@ -80,9 +81,9 @@ const Travel = () => {
         setExit(1)
         setFare(0)
         setDiscount(0)
-        const data = await showCard(id)
-        setCard(data)
-        if (data.discount_number != null) {
+        // const data = await showCard(id)
+        setCard(getCardDetails(id))
+        if (card.discount_number != null) {
             setDiscount(fare * .2)
             const discount = fare * .2
             setFare(prev => prev - discount)

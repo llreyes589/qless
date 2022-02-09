@@ -1,31 +1,40 @@
 import React, { useContext, useState } from 'react';
-import { saveReloading } from '../Api';
 import { GlobalContext } from '../context/GlobalState';
 
 const Load = () => {
-    const { contextUpdateCard } = useContext(GlobalContext)
+    const { contextUpdateCard, getCardDetails } = useContext(GlobalContext)
     const [cardId, setCardId] = useState('');
+    const [card, setCard] = useState([]);
     const [amount, setAmount] = useState(100);
     const [cash, setCash] = useState(100);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [error, setError] = useState(false);
+
 
     const handleAddLoad = async (e) => {
         e.preventDefault()
-        const inputs = {
-            cardId, amount, cash
+        if (card !== undefined) {
+            card.load = Number(card.load) + Number(amount)
+            contextUpdateCard(card)
+            setIsSuccess(true)
+        } else {
+            setError(prev => !prev)
         }
-        const data = await saveReloading(inputs)
-        contextUpdateCard(data)
-        setIsSuccess(true)
     }
-    
-    const handleNewLoad = () =>{
+
+    const handleNewLoad = () => {
         setIsSuccess(prev => !prev)
         setCardId(1)
         setAmount(100)
         setCash(100)
 
     }
+
+    const handleSetCardId = (e) => {
+        setCardId(e)
+        setCard(getCardDetails(e))
+    }
+
 
     return (
         <>
@@ -37,18 +46,24 @@ const Load = () => {
             <hr />
             <div className="row justify-content-center mt-3">
                 <div className="col-md-6 col-sm-12">
-                {isSuccess &&
-                    <div className="alert alert-success">
-                        <p className="lead">Success! Load added. <button className='btn btn-sm btn-primary' onClick={e => handleNewLoad()}>New Load</button></p>
-                    </div>
-                }
+                    {isSuccess &&
+                        <div className="alert alert-success">
+                            <p className="lead">Success! Load added. <button className='btn btn-sm btn-primary' onClick={e => handleNewLoad()}>New Load</button></p>
+                        </div>
+                    }
+                    {error &&
+                        <div className="alert alert-danger">
+                            <p className="lead">Error! Card not found.</p>
+                        </div>
+                    }
+
                     <div className='card shadow'>
                         <div className="card-body">
                             <form onSubmit={e => handleAddLoad(e)}>
                                 <fieldset>
                                     <div className="form-group">
                                         <label htmlFor="card_id">Card ID:</label>
-                                        <input type='number' id='card_id' value={cardId} onChange={e => setCardId(e.target.value)} className='form-control' required min={1} />
+                                        <input type='number' id='card_id' value={cardId} onChange={e => handleSetCardId(e.target.value)} className='form-control' required min={1} />
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="amount">Desired Amount:</label>

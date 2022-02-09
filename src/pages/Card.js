@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
-import { updateCard } from '../Api';
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { GlobalContext } from '../context/GlobalState';
 import TransactionListItem from '../components/TransactionListItem';
@@ -7,7 +6,7 @@ import TransactionListItem from '../components/TransactionListItem';
 
 
 const Card = () => {
-    const { cards, contextUpdateCard } = useContext(GlobalContext)
+    const { cards, contextUpdateCard, getCardDetails } = useContext(GlobalContext)
     let navigate = useNavigate();
     const [card, setCard] = useState(null);
     const [discountType, setDiscountType] = useState('sc');
@@ -32,27 +31,16 @@ const Card = () => {
       };
 
     const params = useParams()
-    const getDetails = () => {
-        setCard(cards.filter(card => card.id === Number(params.id))[0])
-    }
+
     useEffect(() => {
-        getDetails()
+        setCard(getCardDetails(params.id))
         handleChange();
     }, [input]);
 
-    const handleRegister = async (e) => {
+    const handleRegister = (e) => {
         e.preventDefault()
-        const inputs = {
-            id: Number(params.id),
-            discount_number: discountNumber
-        }
-        try {
-
-            const data = await updateCard(inputs.id, inputs.discount_number)
-            contextUpdateCard(data)
-        } catch (error) {
-            alert(error)
-        }
+        card.discount_number = discountNumber
+        contextUpdateCard(card)
         navigate('/cards');
     }
 
@@ -85,7 +73,7 @@ const Card = () => {
                             </div>
                             <div className="row">
                                 <div className="col-md-4 col-sm-12">PURCHASED DATE:</div>
-                                <div className="col-md col-sm-12">{card?.created_at}</div>
+                                <div className="col-md col-sm-12">{card?.purchased_at}</div>
                             </div>
                             <div className="row">
                                 <div className="col-md-4 col-sm-12">EXPIRATION DATE: </div>
@@ -95,10 +83,10 @@ const Card = () => {
                                 (<>
                                     <div className="row">
                                         <div className="col-md-4 col-sm-12">DISCOUNT TYPE:</div>
-                                        <div className="col-md col-sm-12">{card?.discount_number.length > 10 ? 'PWD' : 'Senior Citizen'}</div>
+                                        <div className="col-md col-sm-12">{card?.discount_number.length > 12 ? 'PWD' : 'Senior Citizen'}</div>
                                     </div>
                                     <div className="row">
-                                        <div className="col-md-4 col-sm-12">{card?.discount_number.length > 10 ? 'ID NUMBER' : 'CONTROL NUMBER'}</div>
+                                        <div className="col-md-4 col-sm-12">{card?.discount_number.length > 12 ? 'ID NUMBER' : 'CONTROL NUMBER'}</div>
                                         <div className="col-md col-sm-12">{card?.discount_number}</div>
                                     </div>
                                 </>)
@@ -145,8 +133,8 @@ const Card = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {card && card.transactions.map(transaction => (
-                                        <TransactionListItem transaction={transaction} key={transaction.id} />
+                                    {card && card.transactions.map((transaction,index) => (
+                                        <TransactionListItem transaction={transaction} key={index} />
                                     ))}
                                 </tbody>
                             </table>

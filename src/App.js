@@ -7,28 +7,15 @@ import Load from './pages/Load'
 import Travel from './pages/Travel'
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { fetchCards } from './Api'
 import { GlobalContext } from './context/GlobalState'
 
 function App() {
-  const { cards, fetchAllCards } = useContext(GlobalContext)
+  const { cards } = useContext(GlobalContext)
   const [loading, setLoading] = useState(true)
 
-
   useEffect(() => {
-    init()
-  }, []);
-
-
-  const init = async () => {
-    const data = await fetchCards();
-    fetchAllCards(data)
     setLoading(false)
-  }
-
-
-
-
+  }, []);
 
   return (
     <>
