@@ -13,6 +13,9 @@ const Travel = () => {
     const [card, setCard] = useState([]);
     const [discount, setDiscount] = useState(0);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [additionalDiscount, setadditionalDiscount] = useState(0);
+    const [hasAdditionalDiscount, setHasAdditionalDiscount] = useState(true);
+
     useEffect(() => {
         selectLineNo(lineNo)
         return () => {
@@ -50,11 +53,30 @@ const Travel = () => {
 
         })
         setFare(selectedFare[0].fare)
+        const details = getCardDetails(cardId)
+        // setCard(getCardDetails(cardId))
+        
+        let dailyCount = 0
+        details.transactions.map(transaction =>{
+            if(new Date(transaction.created_at).toLocaleDateString() === new Date().toLocaleDateString()){
+                return dailyCount++
+            }
+        })
+        if(dailyCount > 3){
+            setHasAdditionalDiscount(false)
+        }else{
+            setadditionalDiscount(selectedFare[0].fare * .03)
+            const additionalAdiscount = selectedFare[0].fare * .03
+            setFare(prev => prev - additionalAdiscount)
+        }
+
         if (card.discount_number != null) {
             setDiscount(selectedFare[0].fare * .2)
             const discount = selectedFare[0].fare * .2
             setFare(prev => prev - discount)
         }
+
+
     }
 
     const handleSubmitTrasaction = async (e) => {
@@ -72,6 +94,7 @@ const Travel = () => {
         card.expires_at = addYear(new Date(newTransaction.created_at), 5)
         card.transactions = [...card.transactions, newTransaction]
         setIsSuccess(true)
+        handleNewTransaction()
 
     }
 
@@ -82,12 +105,18 @@ const Travel = () => {
         setFare(0)
         setDiscount(0)
         // const data = await showCard(id)
+        const details = getCardDetails(id)
         setCard(getCardDetails(id))
+
+
+
         if (card.discount_number != null) {
             setDiscount(fare * .2)
             const discount = fare * .2
             setFare(prev => prev - discount)
         }
+
+        // console.log(fare)
     }
 
     const handleNewTransaction = () => {
@@ -97,7 +126,8 @@ const Travel = () => {
         setExit(1)
         setFare(0)
         setDiscount(0)
-        card.discount_number = null
+        setCard([])
+        // card.discount_number = null
     }
 
     return (
@@ -112,7 +142,7 @@ const Travel = () => {
                 <div className="col-md-5">
                     {isSuccess &&
                         <div className="alert alert-success">
-                            <p className="lead">Success! Travel transaction saved. <button className='btn btn-sm btn-primary' onClick={e => handleNewTransaction()}>New Transaction</button></p>
+                            <p className="lead">Success! Travel transaction saved. </p>
                         </div>
                     }
                     <div className="card shadow">
@@ -155,10 +185,17 @@ const Travel = () => {
                                         </div>
                                     </>
                                 }
+                                {card && hasAdditionalDiscount &&
+                                    <div className="form-group">
+                                        <label htmlFor="exit">Additional Discount</label>
+                                        <div className="form-control">{(additionalDiscount.toFixed(2))}</div>
+                                    </div>
+                                }
                                 <div className="form-group">
                                     <label htmlFor="exit">Fare</label>
                                     <div className="form-control">{fare && fare.toFixed(2)}</div>
                                 </div>
+
                                 {card && card.discount_number != null &&
                                     <div className="form-group">
                                         <label htmlFor="exit">Discount:</label>
